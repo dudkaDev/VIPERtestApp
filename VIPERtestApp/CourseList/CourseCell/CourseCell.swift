@@ -7,14 +7,24 @@
 
 import UIKit
 
-class CourseCell: UITableViewCell {
-    var viewModel: CourseCellViewModelProtocol! {
+protocol CellModelRepresentable {
+    var viewModel: CourseCellViewModelProtocol? { get }
+}
+
+class CourseCell: UITableViewCell, CellModelRepresentable {
+    var viewModel: CourseCellViewModelProtocol? {
         didSet {
-            var content = defaultContentConfiguration()
-            content.text = viewModel.courseName
-            guard let imageData = viewModel.imageData else { return }
-            content.image = UIImage(data: imageData)
-            contentConfiguration = content
+            updateView()
         }
+    }
+    
+    private func updateView() {
+        guard let viewModel = viewModel as? CourseCellViewModel else { return }
+        var content = defaultContentConfiguration()
+        content.text = viewModel.courseName
+        if let imageData = viewModel.imageData {
+            content.image = UIImage(data: imageData)
+        }
+        contentConfiguration = content
     }
 }
